@@ -2,8 +2,13 @@
 import Link from "next/link";
 import { SocialButtons } from "./SocialButton";
 import { useState } from "react";
+import { postUser } from "@/actions/server/auth";
+import { useSearchParams } from "next/navigation";
+import { signIn } from "next-auth/react";
 
 export const RegisterForm = () => {
+  const params = useSearchParams();
+  const callback = params.get("callbackUrl") || "/";
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -14,9 +19,18 @@ export const RegisterForm = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log({ ...form });
+    const result = await postUser(form);
+    console.log(result);
+    if (result) {
+      await signIn("credentials", {
+        email: form.email,
+        password: form.password,
+        callbackUrl: callback,
+      });
+      Swal.fire("success", "Registered successfully");
+    }
   };
 
   return (

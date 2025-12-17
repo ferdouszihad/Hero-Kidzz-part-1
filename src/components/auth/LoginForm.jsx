@@ -1,21 +1,33 @@
 "use client";
 import Link from "next/link";
 import { SocialButtons } from "./SocialButton";
-import { useState } from "react";
+import { signIn } from "next-auth/react";
+import Swal from "sweetalert2";
+import { useSearchParams } from "next/navigation";
 
 const LoginForm = () => {
-  const [form, setForm] = useState({
-    email: "",
-    password: "",
-  });
+  const params = useSearchParams();
+  const callback = params.get("callbackUrl") || "/";
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log({ ...form });
+    const form = e.target;
+    const email = form.email.value;
+    const password = form.password.value;
+    console.log(email, password, callback);
+
+    const result = await signIn("credentials", {
+      email,
+      password,
+      // redirect: false,
+      callbackUrl: callback,
+    });
+
+    if (result.ok) {
+      Swal.fire("success", "Welcome", "success");
+    } else {
+      Swal.fire("error", "Wrong Credentials", "error");
+    }
   };
 
   return (
@@ -30,7 +42,6 @@ const LoginForm = () => {
               name="email"
               placeholder="Email"
               className="input input-bordered w-full"
-              onChange={handleChange}
               required
             />
 
@@ -39,7 +50,6 @@ const LoginForm = () => {
               name="password"
               placeholder="Password"
               className="input input-bordered w-full"
-              onChange={handleChange}
               required
             />
 
@@ -52,7 +62,10 @@ const LoginForm = () => {
 
           <p className="text-center text-sm mt-4">
             Don’t have an account?{" "}
-            <Link href={"/register"} className="link link-primary">
+            <Link
+              href={`/register?callbackUrl=${callback}`}
+              className="link link-primary"
+            >
               Register
             </Link>
           </p>
