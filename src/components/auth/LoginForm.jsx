@@ -20,13 +20,13 @@ const LoginForm = () => {
       email,
       password,
       // redirect: false,
-      callbackUrl: callback,
+      callbackUrl: params.get("callbackUrl") || "/",
     });
 
-    if (result.ok) {
-      Swal.fire("success", "Welcome", "success");
+    if (!result.ok) {
+      Swal.fire("error", "Email password not Matched", "error");
     } else {
-      Swal.fire("error", "Wrong Credentials", "error");
+      Swal.fire("success", "Welcome to Kidz Hub", "success");
     }
   };
 

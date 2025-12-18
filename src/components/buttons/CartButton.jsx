@@ -21,6 +21,7 @@ const CartButton = ({ product }) => {
   return (
     <div>
       <button
+        disabled={session.status == "loading"}
         onClick={handleAdd2Cart}
         className="btn btn-primary btn-wide flex gap-2"
       >

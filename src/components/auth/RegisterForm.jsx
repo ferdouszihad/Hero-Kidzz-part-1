@@ -8,7 +8,7 @@ import { signIn } from "next-auth/react";
 
 export const RegisterForm = () => {
   const params = useSearchParams();
-  const callback = params.get("callbackUrl") || "/";
+  const callbackUrl = params.get("callbackUrl") || "/";
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -22,14 +22,17 @@ export const RegisterForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const result = await postUser(form);
-    console.log(result);
-    if (result) {
+
+    if (result.acknowledged) {
       await signIn("credentials", {
         email: form.email,
         password: form.password,
-        callbackUrl: callback,
+        redirect: false,
+        callbackUrl: callbackUrl,
       });
-      Swal.fire("success", "Registered successfully");
+      Swal.fire("success", "Registered successfully", "success");
+    } else {
+      Swal.fire("erro", "Sorry", "error");
     }
   };
 
