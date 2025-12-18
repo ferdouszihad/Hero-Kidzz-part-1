@@ -19,7 +19,7 @@ export const postUser = async (payload) => {
     provider: "credentials",
     name,
     email,
-    password: await bcrypt.hash(password, 12),
+    password: await bcrypt.hash(password, 14),
     role: "user",
   };
 
@@ -39,7 +39,7 @@ export const loginUser = async (payload) => {
   if (!user) {
     return null;
   }
-  const isMatched = bcrypt.compare(password, user?.password);
+  const isMatched = await bcrypt.compare(password, user?.password);
   if (isMatched) {
     return user;
   }
