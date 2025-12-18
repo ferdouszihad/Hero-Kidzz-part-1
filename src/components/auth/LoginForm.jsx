@@ -4,9 +4,11 @@ import { SocialButtons } from "./SocialButton";
 import { signIn } from "next-auth/react";
 import Swal from "sweetalert2";
 import { useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 const LoginForm = () => {
   const params = useSearchParams();
+  const router = useRouter();
   const callback = params.get("callbackUrl") || "/";
 
   const handleSubmit = async (e) => {
@@ -19,14 +21,19 @@ const LoginForm = () => {
     const result = await signIn("credentials", {
       email,
       password,
-      // redirect: false,
+      redirect: false,
       callbackUrl: params.get("callbackUrl") || "/",
     });
 
     if (!result.ok) {
-      Swal.fire("error", "Email password not Matched", "error");
+      Swal.fire(
+        "error",
+        "Email password not Matched . Try Google Login / Register",
+        "error"
+      );
     } else {
       Swal.fire("success", "Welcome to Kidz Hub", "success");
+      router.push(callback);
     }
   };
 
