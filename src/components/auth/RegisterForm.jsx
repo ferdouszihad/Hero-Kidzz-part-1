@@ -28,7 +28,7 @@ export const RegisterForm = () => {
       await signIn("credentials", {
         email: form.email,
         password: form.password,
-        redirect: false,
+        // redirect: false,
         callbackUrl: callbackUrl,
       });
       Swal.fire("success", "Registered successfully", "success");
